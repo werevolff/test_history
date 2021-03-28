@@ -7,17 +7,17 @@ class Order(models.Model):
     Order model
     """
 
+    class Meta:
+        verbose_name = _("order")
+        verbose_name_plural = _("order")
+        ordering = ("-created",)
+
     class StateChoices(models.TextChoices):
         ACTION_REQUIRED = "action_required", _("action required")
         DRAFT = "draft", _("draft")
         SENT = "sent", _("sent")
         DELIVERED = "delivered", _("delivered")
         CANCELED = "canceled", _("canceled")
-
-    class Meta:
-        verbose_name = _("order")
-        verbose_name_plural = _("order")
-        ordering = ("-created",)
 
     state = models.CharField(
         _("state"),
