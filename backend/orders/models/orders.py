@@ -1,8 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from main.utils.models import ModelTrackingCreated
 
-class Order(models.Model):
+
+class Order(ModelTrackingCreated):
     """
     Order model
     """
@@ -25,7 +27,6 @@ class Order(models.Model):
         choices=StateChoices.choices,
         default=StateChoices.ACTION_REQUIRED,
     )
-    created = models.DateTimeField(_("created"), auto_now_add=True, blank=True)
 
 
 class OrderItem(models.Model):
