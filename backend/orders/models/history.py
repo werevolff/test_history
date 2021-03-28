@@ -22,9 +22,7 @@ class Event(ModelTrackingCreated):
     event_type = models.CharField(
         _("event type"), max_length=10, choices=TypeChoices.choices
     )
-    subtype = models.CharField(
-        _("subtype"), max_length=255, choices=TypeChoices.choices
-    )
+    subtype = models.CharField(_("subtype"), max_length=255, blank=True, null=True)
     user = models.ForeignKey(
         "auth.User",
         verbose_name=_("user"),
