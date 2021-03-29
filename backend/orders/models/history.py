@@ -27,6 +27,8 @@ class Event(ModelTrackingCreated):
         "auth.User",
         verbose_name=_("user"),
         related_name="events",
+        blank=True,
+        null=True,
         on_delete=models.PROTECT,
     )
     order = models.ForeignKey(

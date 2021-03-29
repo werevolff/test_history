@@ -11,12 +11,11 @@ from orders.serializers.orders import OrderSerializer
 
 
 @pytest.mark.django_db
-def test_order_serializer(order_factory):
+def test_order_serializer(order_with_item):
     """
     Test OrderSerializer
     """
-    order = order_factory(with_order_item=True)
-    serializer = OrderSerializer(order)
+    serializer = OrderSerializer(order_with_item)
     assert_that(
         serializer.data,
         has_entries(
