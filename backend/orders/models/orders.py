@@ -2,9 +2,10 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from main.utils.models import ModelTrackingCreated
+from orders.mixins import EventCreationHandlerMixin
 
 
-class Order(ModelTrackingCreated):
+class Order(EventCreationHandlerMixin, ModelTrackingCreated):
     """
     Order model
     """
@@ -21,6 +22,8 @@ class Order(ModelTrackingCreated):
         DELIVERED = "delivered", _("delivered")
         CANCELED = "canceled", _("canceled")
 
+    calculate_difference_on_update = True
+
     state = models.CharField(
         _("state"),
         max_length=15,
@@ -28,8 +31,20 @@ class Order(ModelTrackingCreated):
         default=StateChoices.ACTION_REQUIRED,
     )
 
+    @property
+    def order_for_event(self):
+        return self
 
-class OrderItem(models.Model):
+    @property
+    def event_type_on_create(self):
+        return self.event_model.TypeChoices.CREATED
+
+    @property
+    def event_type_on_update(self):
+        return self.event_model.TypeChoices.UPDATED
+
+
+class OrderItem(EventCreationHandlerMixin, models.Model):
     """
     Order item
     """
@@ -38,6 +53,10 @@ class OrderItem(models.Model):
         verbose_name = _("order item")
         verbose_name_plural = _("order items")
         ordering = ("-id",)
+
+    handle_on_create = False
+    calculate_difference_on_update = True
+    event_subtype_on_update = "order_item_updated"
 
     order = models.ForeignKey(
         "Order",
@@ -58,3 +77,11 @@ class OrderItem(models.Model):
     @property
     def product(self) -> int:
         return self.saved_product.product_id
+
+    @property
+    def order_for_event(self):
+        return self.order
+
+    @property
+    def event_type_on_update(self):
+        return self.event_model.TypeChoices.UPDATED
