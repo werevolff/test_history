@@ -39,15 +39,3 @@ def order_with_untracked_event(order_with_item, last_event) -> Order:
 @pytest.fixture
 def last_event(order_with_item, make_order_history) -> Event:
     return order_with_item.events.latest("-created")
-
-
-@pytest.fixture
-def make_order_history(order_with_item, event_factory) -> None:
-    event_factory(event_type=Event.TypeChoices.CREATED, order=order_with_item)
-    Order.objects.filter(pk=order_with_item.pk).update(state=Order.StateChoices.SENT)
-    order_with_item.refresh_from_db()
-    event_factory(
-        event_type=Event.TypeChoices.TRANSITION,
-        order=order_with_item,
-        subtype="order state changed",
-    )

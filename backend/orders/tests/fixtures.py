@@ -1,10 +1,20 @@
-from __future__ import annotations
-
 import pytest
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from orders.models import Order
+from orders.models import Event
+from orders.models import Order
+
+
+@pytest.fixture
+def make_order_history(order_with_item, event_factory) -> None:
+    event_factory(event_type=Event.TypeChoices.CREATED, order=order_with_item)
+    Order.objects.filter(pk=order_with_item.pk).update(state=Order.StateChoices.SENT)
+    order_with_item.refresh_from_db()
+    event_factory(
+        event_type=Event.TypeChoices.TRANSITION,
+        order=order_with_item,
+        subtype="order state changed",
+    )
+    order_with_item.refresh_from_db()
 
 
 @pytest.fixture
