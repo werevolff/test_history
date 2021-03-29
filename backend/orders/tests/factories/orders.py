@@ -11,6 +11,11 @@ class OrderFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = "orders.Order"
 
+    @factory.post_generation
+    def with_order_item(self, create, extracted, **kwargs):
+        if extracted:
+            OrderItemFactory(order=self)
+
 
 @register
 class OrderItemFactory(factory.django.DjangoModelFactory):
@@ -23,4 +28,6 @@ class OrderItemFactory(factory.django.DjangoModelFactory):
         django_get_or_create = ("saved_product",)
 
     order = factory.SubFactory(OrderFactory)
-    saved_product = factory.SubFactory("orders.tests.factories.products.SavedProductFactory")
+    saved_product = factory.SubFactory(
+        "orders.tests.factories.products.SavedProductFactory"
+    )

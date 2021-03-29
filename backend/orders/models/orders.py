@@ -56,5 +56,5 @@ class OrderItem(models.Model):
         return self.saved_product.title
 
     @property
-    def product(self):
-        return self.saved_product.product
+    def product(self) -> int:
+        return self.saved_product.product_id
